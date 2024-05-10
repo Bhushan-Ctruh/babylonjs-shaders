@@ -5,10 +5,23 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + TS</title>
+    <style>
+      #controls-ui-wrapper{
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 200px;
+        height: 200px;
+        transform: translate(-50%, 0);
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>
     <canvas id = "babylon-canvas" ></canvas>
+    <div id="controls-ui-wrapper">
+      <div id="controls-ui" ></div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

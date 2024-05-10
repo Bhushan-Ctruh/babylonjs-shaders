@@ -129,6 +129,7 @@ export class HologramMaterial {
     const camera = scene.activeCamera;
 
     if (camera) {
+      material.setVector3("uCameraPosition", camera.position);
       camera.onViewMatrixChangedObservable.add(() => {
         material.setVector3("uCameraPosition", camera.position);
       });

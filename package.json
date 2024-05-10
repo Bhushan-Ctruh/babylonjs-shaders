@@ -15,6 +15,7 @@
   "dependencies": {
     "@babylonjs/core": "^7.0.0",
     "@babylonjs/loaders": "^7.0.0",
-    "@babylonjs/materials": "^7.0.0"
+    "@babylonjs/materials": "^7.0.0",
+    "nipplejs": "^0.10.2"
   }
 }
