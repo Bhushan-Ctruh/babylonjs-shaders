@@ -4,18 +4,27 @@ import {
   Color3,
   Engine,
   Matrix,
+  Mesh,
+  MeshBuilder,
   Nullable,
   Scene,
   SceneLoader,
   ShaderMaterial,
+  Texture,
   UniversalCamera,
   Vector3,
 } from "@babylonjs/core";
 
 import "@babylonjs/loaders/glTF";
 import { HologramMaterial } from "./helpers/HologramMaterial";
-import { Water } from "./helpers/Water";
+// import { Water } from "./helpers/Water";
 import { CameraControl } from "./helpers/CustomCameraInputs";
+import { ShadingMaterial } from "./helpers/ShadingMaterial";
+import { FireMaterial } from "@babylonjs/materials";
+import { SmokeMaterial } from "./helpers/SmokeMaterial";
+import { GUIScreen } from "./helpers/GUI";
+import { RoundedRect } from "./helpers/RoundedRect";
+import { HtmlLabel } from "./helpers/HtmlLabel";
 
 export class Experience {
   private _canvas: HTMLCanvasElement;
@@ -37,49 +46,110 @@ export class Experience {
 
     this.pointerDownEvent(this.scene);
 
-    this._loadModel("", "", "suzanne.glb", this.scene).then((meshes) => {
-      const model = meshes[1];
+    // this._loadModel("", "", "suzanne.glb", this.scene).then((meshes) => {
+    //   const model = meshes[1];
 
-      if (!model) return;
+    //   if (!model) return;
 
-      const rotation = model.rotationQuaternion?.toEulerAngles();
+    //   const rotation = model.rotationQuaternion?.toEulerAngles();
 
-      if (rotation) {
-        model.rotation = rotation;
-        model.rotationQuaternion = null;
-      }
+    //   if (rotation) {
+    //     model.rotation = rotation;
+    //     model.rotationQuaternion = null;
+    //   }
 
-      const startTime = Date.now();
+    //   const startTime = Date.now();
 
-      this.scene.onBeforeRenderObservable.add(() => {
-        const elapsedTime = Date.now() - startTime;
-        model.rotation.y = elapsedTime * 0.0001;
-      });
+    //   this.scene.onBeforeRenderObservable.add(() => {
+    //     const elapsedTime = Date.now() - startTime;
+    //     model.rotation.y = elapsedTime * 0.0001;
+    //   });
 
-      const hologramMaterial = new HologramMaterial(
-        "demo-material",
-        {
-          color: new Color3(0.1, 1, 0.3),
-          numberOfStripes: 10,
-          stripeSpeed: 1,
-          glitchStrength: 0.5,
-        },
-        this.scene
-      );
+    //   const hologramMaterial = new HologramMaterial(
+    //     "demo-material",
+    //     {
+    //       color: new Color3(0.1, 1, 0.3),
+    //       numberOfStripes: 10,
+    //       stripeSpeed: 1,
+    //       glitchStrength: 0.5,
+    //     },
+    //     this.scene
+    //   );
 
-      model.material = hologramMaterial as ShaderMaterial;
-    });
+    //   const shadingMaterial = new ShadingMaterial("light-material", this.scene);
 
-    const div = document.getElementById("controls-ui");
-    if (!div) throw new Error("DEFINE DIV");
-    const cameraController = new CameraControl(
-      { joystickUIWrapper: div },
+    //   model.material = hologramMaterial as ShaderMaterial;
+    //   model.material = shadingMaterial as ShaderMaterial;
+    // });
+
+    // const plane = MeshBuilder.CreatePlane("demo", {}, this.scene);
+
+    // const fire = new FireMaterial("fire", this.scene);
+
+    // fire.diffuseTexture = new Texture(
+    //   "https://playground.babylonjs.com/textures/fire.png",
+    //   this.scene
+    // );
+    // fire.distortionTexture = new Texture(
+    //   "https://playground.babylonjs.com/textures/distortion.png",
+    //   this.scene
+    // );
+    // fire.opacityTexture = new Texture(
+    //   "https://playground.babylonjs.com/textures/candleopacity.png",
+    //   this.scene
+    // );
+    // fire.speed = 5.0;
+
+    // plane.billboardMode = Mesh.BILLBOARDMODE_Y;
+
+    // plane.material = fire;
+
+    // const plane = MeshBuilder.CreatePlane("demo", {size: 4}, this.scene);
+
+    // new GUIScreen(this.scene);
+
+
+    // this.initArcRotateCamera({});
+    this.initUniversalCamera({})
+
+    const box = MeshBuilder.CreateBox("box", { size: 1 }, this.scene);
+
+    // const boxCorner = box.getBoundingInfo().boundingBox.maximumWorld;
+
+    const sphere = MeshBuilder.CreateSphere(
+      "sphere",
+      { diameter: 0.1 },
       this.scene
     );
 
-    cameraController.enableKeyboardControls()
-    cameraController.enableJoystick()
+    box.addChild(sphere);
 
+    sphere.position.x = 0.5;
+    sphere.position.y = 0.5;
+    sphere.position.z = -0.5;
+
+    const div = document.createElement("div");
+    div.innerText = "Hello World";
+    div.style.background = "white";
+    div.style.padding = "5px 10px";
+    div.style.borderRadius = "5px";
+    div.style.fontFamily = "sans-serif";
+
+    new HtmlLabel(div, { position: sphere, center: true, }, this.scene);
+
+    this.scene.onBeforeRenderObservable.add(() => {
+      // box.position.x = (Math.sin(Date.now() * 0.001) - 0.5 )* 3;
+    });
+
+    // const div = document.getElementById("controls-ui");
+    // if (!div) throw new Error("DEFINE DIV");
+    // const cameraController = new CameraControl(
+    //   { joystickUIWrapper: div },
+    //   this.scene
+    // );
+
+    // cameraController.enableKeyboardControls()
+    // cameraController.enableJoystick()
 
     // const water = new Water(this);
 
@@ -148,7 +218,7 @@ export class Experience {
     this._camera?.dispose();
     this._camera = new ArcRotateCamera(
       "Camera",
-      0,
+      -Math.PI / 2,
       Math.PI / 2,
       10,
       position || new Vector3(0, 0, 0),
