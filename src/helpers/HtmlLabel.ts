@@ -92,27 +92,32 @@ export class HtmlLabel {
   };
 
   public attachUIToMesh = (root: HTMLElement, onCameraMoveOnly?: boolean) => {
-    const observableCallback = () => {
-      const position = this.projectPointToScreenSpace();
-      root.style.left = position.px + "px";
-      root.style.top = position.py + "px";
-    };
     const camera = this.scene.activeCamera;
 
     if (!camera) {
       throw new Error("Camera not found");
     }
 
+    const observableCallback = () => {
+      const position = this.projectPointToScreenSpace();
+      root.style.left = position.px + "px";
+      root.style.top = position.py + "px";
+    };
+
+    window.addEventListener("resize", observableCallback);
+
     if (onCameraMoveOnly) {
       observableCallback();
       camera.onViewMatrixChangedObservable.add(observableCallback);
       return () => {
         camera.onViewMatrixChangedObservable.removeCallback(observableCallback);
+        window.removeEventListener("resize", observableCallback);
       };
     } else {
       this.scene.onBeforeRenderObservable.add(observableCallback);
       return () => {
         this.scene.onBeforeRenderObservable.removeCallback(observableCallback);
+        window.removeEventListener("resize", observableCallback);
       };
     }
   };
