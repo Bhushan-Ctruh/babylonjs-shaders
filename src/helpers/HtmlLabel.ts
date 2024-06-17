@@ -11,6 +11,8 @@ const isInBehindOfCamera = (
   return angleRadians > Math.PI / 2;
 };
 
+const v_ = new Vector3(0.5, 0.5, 0.0);
+
 export class HtmlLabel {
   private htmlElement: HTMLElement;
   private position: Vector3 | AbstractMesh;
@@ -78,7 +80,7 @@ export class HtmlLabel {
     );
     const screenCoords = posInViewProj
       .multiplyByFloats(0.5, -0.5, 1.0)
-      .add(new Vector3(0.5, 0.5, 0.0))
+      .add(v_)
       .multiplyByFloats(
         this.scene.getEngine().getRenderWidth(),
         this.scene.getEngine().getRenderHeight(),
