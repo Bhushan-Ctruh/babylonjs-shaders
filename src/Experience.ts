@@ -135,7 +135,7 @@ export class Experience {
     div.style.borderRadius = "5px";
     div.style.fontFamily = "sans-serif";
 
-    new HtmlLabel(div, { position: sphere, center: true, }, this.scene);
+    new HtmlLabel(div, { position: sphere, center: true, onCameraMoveOnly: true}, this.scene);
 
     this.scene.onBeforeRenderObservable.add(() => {
       // box.position.x = (Math.sin(Date.now() * 0.001) - 0.5 )* 3;

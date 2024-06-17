@@ -1,18 +1,14 @@
 import { AbstractMesh, Scene, Vector3 } from "@babylonjs/core";
 
-function radiansToDegrees(radians: number) {
-  return radians * (180 / Math.PI);
-}
-
-const isInFrontOfCamera = (
+const isInBehindOfCamera = (
   pointPosition: Vector3,
+  cameraPosition: Vector3,
   cameraDirection: Vector3
 ) => {
-  const pointDirection = pointPosition.subtract(cameraDirection).normalize();
+  const pointDirection = pointPosition.subtract(cameraPosition).normalize();
   const dot = Vector3.Dot(pointDirection, cameraDirection);
   const angleRadians = Math.acos(dot);
-  const angleDegrees = radiansToDegrees(angleRadians);
-  return angleDegrees > Math.PI / 2;
+  return angleRadians > Math.PI / 2;
 };
 
 export class HtmlLabel {
@@ -66,8 +62,9 @@ export class HtmlLabel {
         ? this.position
         : this.position.getAbsolutePosition();
 
-    const isPointBehindCamera = !isInFrontOfCamera(
+    const isPointBehindCamera = isInBehindOfCamera(
       point,
+      this.scene.activeCamera!.position,
       this.scene.activeCamera!.getForwardRay().direction
     );
 
