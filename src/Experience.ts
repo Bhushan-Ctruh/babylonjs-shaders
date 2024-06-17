@@ -11,6 +11,7 @@ import {
   SceneLoader,
   ShaderMaterial,
   Texture,
+  TransformNode,
   UniversalCamera,
   Vector3,
 } from "@babylonjs/core";
@@ -25,6 +26,7 @@ import { SmokeMaterial } from "./helpers/SmokeMaterial";
 import { GUIScreen } from "./helpers/GUI";
 import { RoundedRect } from "./helpers/RoundedRect";
 import { HtmlLabel } from "./helpers/HtmlLabel";
+import { HTML2DLabel } from "./helpers/Html3D";
 
 export class Experience {
   private _canvas: HTMLCanvasElement;
@@ -108,9 +110,8 @@ export class Experience {
 
     // new GUIScreen(this.scene);
 
-
     // this.initArcRotateCamera({});
-    this.initUniversalCamera({})
+    this.initUniversalCamera({});
 
     const box = MeshBuilder.CreateBox("box", { size: 1 }, this.scene);
 
@@ -135,10 +136,24 @@ export class Experience {
     div.style.borderRadius = "5px";
     div.style.fontFamily = "sans-serif";
 
-    new HtmlLabel(div, { position: sphere, center: true, onCameraMoveOnly: true}, this.scene);
+    const htmlNode = new HTML2DLabel(
+      "html-node",
+      { htmlElement: div, center: true, distanceFactor: 4.5 },
+      this.scene
+    );
+
+    htmlNode.position.x = 0.5;
+    htmlNode.position.y = 0.5;
+    htmlNode.position.z = -0.5;
+
+    box.addChild(htmlNode);
+
+    // new HtmlLabel(div, { position: sphere, center: true, onCameraMoveOnly: true}, this.scene);
 
     this.scene.onBeforeRenderObservable.add(() => {
-      // box.position.x = (Math.sin(Date.now() * 0.001) - 0.5 )* 3;
+      box.position.z = (Math.sin(Date.now() * 0.001) + 1) * 3;
+      box.rotation.x = (Math.sin(Date.now() * 0.001) - 0.5) * 1.5;
+      box.rotation.y = (Math.sin(Date.now() * 0.001) - 0.5) * 1.5;
     });
 
     // const div = document.getElementById("controls-ui");
