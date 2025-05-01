@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
@@ -13,10 +13,10 @@
     "vite": "^5.2.0"
   },
   "dependencies": {
-    "@babylonjs/core": "^7.0.0",
+    "@babylonjs/core": "^7.15.1",
     "@babylonjs/gui": "^7.9.0",
-    "@babylonjs/loaders": "^7.0.0",
-    "@babylonjs/materials": "^7.0.0",
+    "@babylonjs/loaders": "6.15.0",
+    "@babylonjs/materials": "6.15.0",
     "nipplejs": "^0.10.2"
   }
 }

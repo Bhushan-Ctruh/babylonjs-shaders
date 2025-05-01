@@ -2,31 +2,32 @@ import {
   AbstractMesh,
   ArcRotateCamera,
   Color3,
+  Constants,
   Engine,
   Matrix,
   Mesh,
   MeshBuilder,
   Nullable,
+  Quaternion,
+  RawTexture,
   Scene,
   SceneLoader,
   ShaderMaterial,
-  Texture,
-  TransformNode,
+  StandardMaterial,
   UniversalCamera,
   Vector3,
+  VertexBuffer,
 } from "@babylonjs/core";
 
 import "@babylonjs/loaders/glTF";
-import { HologramMaterial } from "./helpers/HologramMaterial";
-// import { Water } from "./helpers/Water";
-import { CameraControl } from "./helpers/CustomCameraInputs";
-import { ShadingMaterial } from "./helpers/ShadingMaterial";
-import { FireMaterial } from "@babylonjs/materials";
-import { SmokeMaterial } from "./helpers/SmokeMaterial";
-import { GUIScreen } from "./helpers/GUI";
-import { RoundedRect } from "./helpers/RoundedRect";
-import { HtmlLabel } from "./helpers/HtmlLabel";
-import { HTML2DLabel } from "./helpers/Html3D";
+import { WaterMaterial, WaterPipeMaterial } from "./helpers/waterMaterial";
+// import { BatchedMesh } from "./helpers/BatchedMesh";
+// import {
+//   InteriorMapping,
+//   InteriorMappingMaterial,
+// } from "./helpers/InteriorMapping/InteriorMapping";
+// import { computeTangents } from "./helpers/InteriorMapping/MeshTangent";
+// import { BatchedMesh } from "./helpers/MergeMesh";
 
 export class Experience {
   private _canvas: HTMLCanvasElement;
@@ -42,131 +43,36 @@ export class Experience {
     this._engine = new Engine(this._canvas, true);
     this.scene = new Scene(this._engine);
 
-    this.initUniversalCamera({});
+    // this.initUniversalCamera({});
 
     this.scene.createDefaultLight();
 
     this.pointerDownEvent(this.scene);
 
-    // this._loadModel("", "", "suzanne.glb", this.scene).then((meshes) => {
-    //   const model = meshes[1];
+    this.initArcRotateCamera({});
 
-    //   if (!model) return;
-
-    //   const rotation = model.rotationQuaternion?.toEulerAngles();
-
-    //   if (rotation) {
-    //     model.rotation = rotation;
-    //     model.rotationQuaternion = null;
-    //   }
-
-    //   const startTime = Date.now();
-
-    //   this.scene.onBeforeRenderObservable.add(() => {
-    //     const elapsedTime = Date.now() - startTime;
-    //     model.rotation.y = elapsedTime * 0.0001;
-    //   });
-
-    //   const hologramMaterial = new HologramMaterial(
-    //     "demo-material",
-    //     {
-    //       color: new Color3(0.1, 1, 0.3),
-    //       numberOfStripes: 10,
-    //       stripeSpeed: 1,
-    //       glitchStrength: 0.5,
-    //     },
-    //     this.scene
-    //   );
-
-    //   const shadingMaterial = new ShadingMaterial("light-material", this.scene);
-
-    //   model.material = hologramMaterial as ShaderMaterial;
-    //   model.material = shadingMaterial as ShaderMaterial;
-    // });
-
-    // const plane = MeshBuilder.CreatePlane("demo", {}, this.scene);
-
-    // const fire = new FireMaterial("fire", this.scene);
-
-    // fire.diffuseTexture = new Texture(
-    //   "https://playground.babylonjs.com/textures/fire.png",
-    //   this.scene
-    // );
-    // fire.distortionTexture = new Texture(
-    //   "https://playground.babylonjs.com/textures/distortion.png",
-    //   this.scene
-    // );
-    // fire.opacityTexture = new Texture(
-    //   "https://playground.babylonjs.com/textures/candleopacity.png",
-    //   this.scene
-    // );
-    // fire.speed = 5.0;
-
-    // plane.billboardMode = Mesh.BILLBOARDMODE_Y;
-
-    // plane.material = fire;
-
-    // const plane = MeshBuilder.CreatePlane("demo", {size: 4}, this.scene);
-
-    // new GUIScreen(this.scene);
-
-    // this.initArcRotateCamera({});
-    this.initUniversalCamera({});
-
-    const box = MeshBuilder.CreateBox("box", { size: 1 }, this.scene);
-
-    // const boxCorner = box.getBoundingInfo().boundingBox.maximumWorld;
-
-    const sphere = MeshBuilder.CreateSphere(
-      "sphere",
-      { diameter: 0.1 },
+    const plane = MeshBuilder.CreateGround(
+      "plane",
+      { width: 4, height: 4, subdivisions: 20 },
       this.scene
     );
 
-    box.addChild(sphere);
+    const material = new WaterMaterial("water", this.scene);
+    // material.wireframe = true;
+    plane.material = material;
 
-    sphere.position.x = 0.5;
-    sphere.position.y = 0.5;
-    sphere.position.z = -0.5;
-
-    const div = document.createElement("div");
-    div.innerText = "Hello World";
-    div.style.background = "white";
-    div.style.padding = "5px 10px";
-    div.style.borderRadius = "5px";
-    div.style.fontFamily = "sans-serif";
-
-    const htmlNode = new HTML2DLabel(
-      "html-node",
-      { htmlElement: div, center: true, distanceFactor: 4.5 },
-      this.scene
-    );
-
-    htmlNode.position.x = 0.5;
-    htmlNode.position.y = 0.5;
-    htmlNode.position.z = -0.5;
-
-    box.addChild(htmlNode);
-
-    // new HtmlLabel(div, { position: sphere, center: true, onCameraMoveOnly: true}, this.scene);
-
-    this.scene.onBeforeRenderObservable.add(() => {
-      box.position.z = (Math.sin(Date.now() * 0.001) + 1) * 3;
-      box.rotation.x = (Math.sin(Date.now() * 0.001) - 0.5) * 1.5;
-      box.rotation.y = (Math.sin(Date.now() * 0.001) - 0.5) * 1.5;
-    });
-
-    // const div = document.getElementById("controls-ui");
-    // if (!div) throw new Error("DEFINE DIV");
-    // const cameraController = new CameraControl(
-    //   { joystickUIWrapper: div },
+    // const cylinder = MeshBuilder.CreateCylinder(
+    //   "cylinder",
+    //   { diameter: 0.7, height: 1, subdivisions: 10 },
     //   this.scene
     // );
 
-    // cameraController.enableKeyboardControls()
-    // cameraController.enableJoystick()
+    // cylinder.position.y += 0.5;
+    // // cylinder.rotation.x = Math.PI / 2;
 
-    // const water = new Water(this);
+    // const pipeMat = new WaterPipeMaterial("pipeMat", this.scene);
+    // // pipeMat.wireframe = true;
+    // cylinder.material = pipeMat;
 
     this._GameLoop(this._engine, this.scene);
   }
@@ -249,7 +155,7 @@ export class Experience {
       position || new Vector3(0, 0, -4),
       this.scene
     );
-    this._camera.speed = 0.2;
+    // this._camera.speed = 40;
     this._camera.attachControl();
   };
 }

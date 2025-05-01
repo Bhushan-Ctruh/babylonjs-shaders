@@ -9,6 +9,7 @@ import {
   UniversalCamera,
   Vector3,
   KeyboardInfo,
+  //@ts-expect-error
   AbstractEngine,
 } from "@babylonjs/core";
 import nipplejs, { JoystickManager } from "nipplejs";
